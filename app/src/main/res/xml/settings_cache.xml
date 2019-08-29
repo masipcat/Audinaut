@@ -40,7 +40,7 @@
             android:key="cacheSize"
             android:title="@string/settings.cache_size" />
 
-        <net.nullsum.audinaut.view.CacheLocationPreference
+        <EditTextPreference
             android:key="cacheLocation"
             android:title="@string/settings.cache_location" />
 

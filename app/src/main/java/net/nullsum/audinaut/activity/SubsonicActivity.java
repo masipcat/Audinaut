@@ -21,11 +21,9 @@ package net.nullsum.audinaut.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -68,8 +66,6 @@ import net.nullsum.audinaut.util.UserUtil;
 import net.nullsum.audinaut.util.Util;
 import net.nullsum.audinaut.view.UpdateView;
 
-import java.io.File;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 

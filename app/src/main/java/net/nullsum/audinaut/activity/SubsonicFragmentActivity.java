@@ -26,12 +26,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
@@ -456,10 +453,6 @@ public class SubsonicFragmentActivity extends SubsonicActivity implements Downlo
     }
 
     private void loadSession() {
-        PreferenceManager.setDefaultValues(this, R.xml.settings_appearance, false);
-        PreferenceManager.setDefaultValues(this, R.xml.settings_cache, false);
-        PreferenceManager.setDefaultValues(this, R.xml.settings_playback, false);
-
         SharedPreferences prefs = Util.getPreferences(this);
         if (!prefs.contains(Constants.PREFERENCES_KEY_CACHE_LOCATION) || prefs.getString(Constants.PREFERENCES_KEY_CACHE_LOCATION, null) == null) {
             resetCacheLocation(prefs);
