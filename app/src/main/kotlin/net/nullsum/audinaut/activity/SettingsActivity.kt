@@ -7,6 +7,7 @@ import androidx.preference.Preference
 import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
+import androidx.preference.SwitchPreference
 import android.content.SharedPreferences
 import net.nullsum.audinaut.R
 import net.nullsum.audinaut.util.Constants
@@ -70,16 +71,48 @@ class SettingsActivity : SubsonicActivity() {
     class ServerListFragment: PreferenceFragmentCompat() {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            addPreferencesFromResource(R.xml.settings_servers)
-
             val context = preferenceManager.context
             val preferences = Util.getPreferences(context)
             val serverCount = preferences.getInt(Constants.PREFERENCES_KEY_SERVER_COUNT, 1)
 
-            for (i in 1..serverCount) {
-                Log.d("fuck", "$i")
+            preferenceScreen = getPreferenceManager().createPreferenceScreen(context)
+
+            if (serverCount > 0) {
+                var serverPreference: Preference
+                for (instance in 1..serverCount) {
+                    serverPreference = Preference(context)
+                    serverPreference.key = "$instance"
+                    serverPreference.title = preferences.getString(Constants.PREFERENCES_KEY_SERVER_NAME + instance, "error")
+                    preferenceScreen.addPreference(serverPreference)
+                    Log.d("fuck", "$instance")
+                }
+            }
+
+            val toggle = SwitchPreference(context)
+            toggle.key = "some_fake_key"
+            toggle.title = "Wow, neato"
+            preferenceScreen.addPreference(toggle)
+            preferenceScreen.setTitle(R.string.settings_server_unused)
+            preferenceScreen.setKey("another_fake_key")
+        }
+
+        override fun onPreferenceTreeClick(preference: Preference): Boolean {
+            when (preference.getKey()) {
+                else -> {
+                    var fragmentManager = getFragmentManager()
+                    if (fragmentManager != null) {
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.fragment_container, ServerInstanceFragment(preference.getKey().toInt()))
+                                .addToBackStack(null)
+                                .commit()
+                        return true
+                    } else {
+                        return false
+                    }
+                }
             }
         }
+
 
     }
 
@@ -87,13 +120,6 @@ class SettingsActivity : SubsonicActivity() {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             val context = preferenceManager.context
-            val preferences = Util.getPreferences(context)
-            val serverCount = preferences.getInt(Constants.PREFERENCES_KEY_SERVER_COUNT, 1)
-
-            for (i in 1..serverCount) {
-                Log.d("fuck", "$i")
-            }
-
             val serverNamePreference = EditTextPreference(context)
             serverNamePreference.key = Constants.PREFERENCES_KEY_SERVER_NAME + instance
             serverNamePreference.setDefaultValue(getResources().getString(R.string.settings_server_unused))
