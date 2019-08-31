@@ -7,11 +7,11 @@ import androidx.preference.Preference
 import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
+import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreference
 import android.content.SharedPreferences
 import net.nullsum.audinaut.R
 import net.nullsum.audinaut.util.Constants
-import net.nullsum.audinaut.util.Util
 
 class SettingsActivity : SubsonicActivity() {
 
@@ -72,8 +72,8 @@ class SettingsActivity : SubsonicActivity() {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             val context = preferenceManager.context
-            val preferences = Util.getPreferences(context)
-            val serverCount = preferences.getInt(Constants.PREFERENCES_KEY_SERVER_COUNT, 1)
+            val sharedPreferences = getPreferenceManager().getSharedPreferences()
+            val serverCount = sharedPreferences.getInt(Constants.PREFERENCES_KEY_SERVER_COUNT, 1)
 
             preferenceScreen = getPreferenceManager().createPreferenceScreen(context)
 
@@ -82,7 +82,7 @@ class SettingsActivity : SubsonicActivity() {
                 for (instance in 1..serverCount) {
                     serverPreference = Preference(context)
                     serverPreference.key = "$instance"
-                    serverPreference.title = preferences.getString(Constants.PREFERENCES_KEY_SERVER_NAME + instance, "error")
+                    serverPreference.title = sharedPreferences.getString(Constants.PREFERENCES_KEY_SERVER_NAME + instance, "error")
                     preferenceScreen.addPreference(serverPreference)
                     Log.d("fuck", "$instance")
                 }
