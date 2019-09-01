@@ -12,6 +12,7 @@ import androidx.preference.SwitchPreference
 import android.content.SharedPreferences
 import net.nullsum.audinaut.R
 import net.nullsum.audinaut.util.Constants
+import net.nullsum.audinaut.util.Util
 
 class SettingsActivity : SubsonicActivity() {
 
@@ -131,8 +132,8 @@ class SettingsActivity : SubsonicActivity() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             val sharedPreferences = getPreferenceManager().getSharedPreferences()
             var serverCount = sharedPreferences.getInt(Constants.PREFERENCES_KEY_SERVER_COUNT, 1)
+            val editor = sharedPreferences.edit()
             if (instance > serverCount) {
-                val editor = sharedPreferences.edit()
                 serverCount++
                 editor.putInt(Constants.PREFERENCES_KEY_SERVER_COUNT, serverCount)
                 editor.apply()
@@ -178,15 +179,30 @@ class SettingsActivity : SubsonicActivity() {
             serverRemoveServerPreference.key = Constants.PREFERENCES_KEY_SERVER_REMOVE + instance
             serverRemoveServerPreference.setPersistent(false)
             serverRemoveServerPreference.setTitle(R.string.settings_servers_remove)
+            serverRemoveServerPreference.setOnPreferenceClickListener(
+                object : Preference.OnPreferenceClickListener {
+                    override fun onPreferenceClick(preference: Preference): Boolean {
+                        editor.putInt(Constants.PREFERENCES_KEY_SERVER_COUNT, serverCount - 1)
+                        editor.remove(Constants.PREFERENCES_KEY_SERVER_INTERNAL_URL + instance)
+                        editor.remove(Constants.PREFERENCES_KEY_SERVER_LOCAL_NETWORK_SSID + instance)
+                        editor.remove(Constants.PREFERENCES_KEY_USERNAME + instance)
+                        editor.remove(Constants.PREFERENCES_KEY_PASSWORD + instance)
+                        editor.remove(Constants.PREFERENCES_KEY_SERVER_URL + instance)
+                        editor.remove(Constants.PREFERENCES_KEY_SERVER_NAME + instance)
+                        editor.apply()
+                        /*
+                        val activeServer = sharedPreferences.getInt(Constants.PREFERENCES_KEY_SERVER_INSTANCE, 1)
+                        for (i in 1..serverCount) {
+                            Util.removeInstanceName(context, i, activeServer)
+                        }
+                        */
+                        return true
+                    }
+                }
+            )
             /*
             serverRemoveServerPreference.setOnPreferenceClickListener(preference -> {
                 Util.confirmDialog(context, R.string.common_delete, screen.getTitle().toString(), (dialog, which) -> {
-                    // Reset values to null so when we ask for them again they are new
-                    serverNamePreference.setText(null);
-                    serverUrlPreference.setText(null);
-                    serverUsernamePreference.setText(null);
-                    serverPasswordPreference.setText(null);
-
                     // Don't use Util.getActiveServer since it is 0 if offline
                     int activeServer = Util.getPreferences(context).getInt(Constants.PREFERENCES_KEY_SERVER_INSTANCE, 1);
                     for (int i = instance; i <= serverCount; i++) {
@@ -226,20 +242,20 @@ class SettingsActivity : SubsonicActivity() {
             sharedPreferences.registerOnSharedPreferenceChangeListener(
                 object : SharedPreferences.OnSharedPreferenceChangeListener {
                     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-                        updateSummaries(sharedPreferences)
+                        updateSummaries()
                     }
                 }
             )
 
-            updateSummaries(sharedPreferences)
+            updateSummaries()
         }
 
-        fun updateSummaries(sharedPreferences: SharedPreferences) {
-            serverNamePreference.summary = sharedPreferences.getString(serverNamePreference.key, "")
-            serverUrlPreference.summary = sharedPreferences.getString(serverUrlPreference.key, "")
-            serverLocalNetworkSSIDPreference.summary = sharedPreferences.getString(serverLocalNetworkSSIDPreference.key, "")
-            serverInternalUrlPreference.summary = sharedPreferences.getString(serverInternalUrlPreference.key, "")
-            serverUsernamePreference.summary = sharedPreferences.getString(serverUsernamePreference.key, "")
+        fun updateSummaries() {
+            serverNamePreference.summary = serverNamePreference.text
+            serverUrlPreference.summary = serverUrlPreference.text
+            serverLocalNetworkSSIDPreference.summary = serverLocalNetworkSSIDPreference.text
+            serverInternalUrlPreference.summary = serverInternalUrlPreference.text
+            serverUsernamePreference.summary = serverUsernamePreference.text
             serverPasswordPreference.summary = "***"
         }
     }
