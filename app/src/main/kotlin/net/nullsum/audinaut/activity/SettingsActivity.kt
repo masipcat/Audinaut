@@ -21,50 +21,55 @@ class SettingsActivity : SubsonicActivity() {
         setSupportActionBar(findViewById(R.id.main_toolbar))
 
         supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, SettingsFragment(R.xml.settings))
+                .replace(R.id.fragment_container, SettingsFragment())
                 .commit()
     }
 
-    class SettingsFragment(val resourceId: Int): PreferenceFragmentCompat() {
+    class SettingsFragment: PreferenceFragmentCompat() {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            addPreferencesFromResource(resourceId)
+            addPreferencesFromResource(R.xml.settings)
         }
 
         override fun onPreferenceTreeClick(preference: Preference): Boolean {
             when (preference.getKey()) {
-                "appearance" -> return navigateToPreferenceScreen(R.xml.settings_appearance)
-                "cache" -> return navigateToPreferenceScreen(R.xml.settings_cache)
-                "playback" -> return navigateToPreferenceScreen(R.xml.settings_playback)
-                "servers" -> {
-                    var fragmentManager = getFragmentManager()
-                    if (fragmentManager != null) {
-                        fragmentManager.beginTransaction()
-                                .replace(R.id.fragment_container, ServerListFragment())
-                                .addToBackStack(null)
-                                .commit()
-                        return true
-                    } else {
-                        return false
-                    }
-                }
-                else -> {
-                    return super.onPreferenceTreeClick(preference)
-                }
+                "appearance" -> return navigateToFragment(AppearanceFragment())
+                "cache" -> return navigateToFragment(CacheFragment())
+                "playback" -> return navigateToFragment(PlaybackFragment())
+                "servers" -> return navigateToFragment(ServerListFragment())
+                else -> return super.onPreferenceTreeClick(preference)
             }
         }
 
-        fun navigateToPreferenceScreen(resourceId: Int): Boolean {
+        fun navigateToFragment(fragment: PreferenceFragmentCompat): Boolean {
             var fragmentManager = getFragmentManager()
             if (fragmentManager != null) {
                 fragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, SettingsFragment(resourceId))
+                        .replace(R.id.fragment_container, fragment)
                         .addToBackStack(null)
                         .commit()
                 return true
             } else {
                 return false
             }
+        }
+    }
+
+    class AppearanceFragment: PreferenceFragmentCompat() {
+        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            addPreferencesFromResource(R.xml.settings_appearance)
+        }
+    }
+
+    class PlaybackFragment: PreferenceFragmentCompat() {
+        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            addPreferencesFromResource(R.xml.settings_playback)
+        }
+    }
+
+    class CacheFragment: PreferenceFragmentCompat() {
+        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            addPreferencesFromResource(R.xml.settings_cache)
         }
     }
 
