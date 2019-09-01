@@ -129,30 +129,29 @@ class SettingsActivity : SubsonicActivity() {
             val context = preferenceManager.context
             val serverNamePreference = EditTextPreference(context)
             serverNamePreference.key = Constants.PREFERENCES_KEY_SERVER_NAME + instance
+            serverNamePreference.summary = sharedPreferences.getString(serverNamePreference.key, "")
             serverNamePreference.setDefaultValue(getResources().getString(R.string.settings_server_unused))
             serverNamePreference.setTitle(R.string.settings_server_name)
             serverNamePreference.setDialogTitle(R.string.settings_server_name)
 
             val serverUrlPreference = EditTextPreference(context)
             serverUrlPreference.key = Constants.PREFERENCES_KEY_SERVER_URL + instance
+            serverUrlPreference.summary = sharedPreferences.getString(serverUrlPreference.key, "")
             //serverUrlPreference.getEditText().setInputType(InputType.TYPE_TEXT_VARIATION_URI)
             serverUrlPreference.setDefaultValue("http://yourhost")
             serverUrlPreference.setTitle(R.string.settings_server_address)
             serverUrlPreference.setDialogTitle(R.string.settings_server_address)
 
-            if (serverUrlPreference.getText() == null) {
-                serverUrlPreference.setText("http://yourhost")
-            }
-            serverUrlPreference.setSummary(serverUrlPreference.getText())
-
             val serverLocalNetworkSSIDPreference = EditTextPreference(context)
             serverLocalNetworkSSIDPreference.key = Constants.PREFERENCES_KEY_SERVER_LOCAL_NETWORK_SSID + instance
+            serverLocalNetworkSSIDPreference.summary = sharedPreferences.getString(serverLocalNetworkSSIDPreference.key, "")
             serverLocalNetworkSSIDPreference.setDefaultValue(getResources().getString(R.string.settings_server_unused))
             serverLocalNetworkSSIDPreference.setTitle(R.string.settings_server_local_network_ssid)
             serverLocalNetworkSSIDPreference.setDialogTitle(R.string.settings_server_local_network_ssid)
 
             val serverInternalUrlPreference: EditTextPreference = EditTextPreference(context)
             serverInternalUrlPreference.key = Constants.PREFERENCES_KEY_SERVER_INTERNAL_URL + instance
+            serverInternalUrlPreference.summary = sharedPreferences.getString(serverInternalUrlPreference.key, "")
             serverInternalUrlPreference.setDefaultValue("")
             serverInternalUrlPreference.setTitle(R.string.settings_server_internal_address)
             serverInternalUrlPreference.setDialogTitle(R.string.settings_server_internal_address)
@@ -160,6 +159,7 @@ class SettingsActivity : SubsonicActivity() {
 
             val serverUsernamePreference: EditTextPreference = EditTextPreference(context)
             serverUsernamePreference.key = Constants.PREFERENCES_KEY_USERNAME + instance
+            serverUsernamePreference.summary = sharedPreferences.getString(serverUsernamePreference.key, "")
             serverUsernamePreference.setTitle(R.string.settings_server_username)
             serverUsernamePreference.setDialogTitle(R.string.settings_server_username)
 
