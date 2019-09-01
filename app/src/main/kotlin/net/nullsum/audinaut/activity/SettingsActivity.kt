@@ -173,6 +173,43 @@ class SettingsActivity : SubsonicActivity() {
             serverPasswordPreference.setSummary("***");
             serverPasswordPreference.setTitle(R.string.settings_server_password);
 
+            val serverRemoveServerPreference = Preference(context)
+            serverRemoveServerPreference.key = Constants.PREFERENCES_KEY_SERVER_REMOVE + instance
+            serverRemoveServerPreference.setPersistent(false)
+            serverRemoveServerPreference.setTitle(R.string.settings_servers_remove)
+            /*
+            serverRemoveServerPreference.setOnPreferenceClickListener(preference -> {
+                Util.confirmDialog(context, R.string.common_delete, screen.getTitle().toString(), (dialog, which) -> {
+                    // Reset values to null so when we ask for them again they are new
+                    serverNamePreference.setText(null);
+                    serverUrlPreference.setText(null);
+                    serverUsernamePreference.setText(null);
+                    serverPasswordPreference.setText(null);
+
+                    // Don't use Util.getActiveServer since it is 0 if offline
+                    int activeServer = Util.getPreferences(context).getInt(Constants.PREFERENCES_KEY_SERVER_INSTANCE, 1);
+                    for (int i = instance; i <= serverCount; i++) {
+                        Util.removeInstanceName(context, i, activeServer);
+                    }
+
+                    serverCount--;
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putInt(Constants.PREFERENCES_KEY_SERVER_COUNT, serverCount);
+                    editor.apply();
+
+                    removeCurrent();
+
+                    SubsonicFragment parentFragment = context.getCurrentFragment();
+                    if (parentFragment instanceof SettingsFragment) {
+                        SettingsFragment serverSelectionFragment = (SettingsFragment) parentFragment;
+                        serverSelectionFragment.checkForRemoved();
+                    }
+                });
+
+                return true;
+            });
+            */
+
             val screen = getPreferenceManager().createPreferenceScreen(context)
             screen.setTitle(R.string.settings_server_unused);
             screen.setKey(Constants.PREFERENCES_KEY_SERVER_KEY + instance);
@@ -182,6 +219,7 @@ class SettingsActivity : SubsonicActivity() {
             screen.addPreference(serverInternalUrlPreference)
             screen.addPreference(serverUsernamePreference)
             screen.addPreference(serverPasswordPreference)
+            screen.addPreference(serverRemoveServerPreference)
             preferenceScreen = screen
         }
     }
