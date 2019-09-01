@@ -256,7 +256,6 @@ class SettingsActivity : SubsonicActivity() {
             serverLocalNetworkSSIDPreference.summary = serverLocalNetworkSSIDPreference.text
             serverInternalUrlPreference.summary = serverInternalUrlPreference.text
             serverUsernamePreference.summary = serverUsernamePreference.text
-            serverPasswordPreference.summary = "***"
         }
     }
 }
