@@ -73,27 +73,25 @@ class SettingsActivity : SubsonicActivity() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             val context = preferenceManager.context
             val sharedPreferences = getPreferenceManager().getSharedPreferences()
-            val serverCount = sharedPreferences.getInt(Constants.PREFERENCES_KEY_SERVER_COUNT, 1)
+            var serverCount = sharedPreferences.getInt(Constants.PREFERENCES_KEY_SERVER_COUNT, 1)
 
             preferenceScreen = getPreferenceManager().createPreferenceScreen(context)
 
+            var serverPreference: Preference
             if (serverCount > 0) {
-                var serverPreference: Preference
                 for (instance in 1..serverCount) {
                     serverPreference = Preference(context)
                     serverPreference.key = "$instance"
                     serverPreference.title = sharedPreferences.getString(Constants.PREFERENCES_KEY_SERVER_NAME + instance, "error")
                     preferenceScreen.addPreference(serverPreference)
-                    Log.d("fuck", "$instance")
                 }
             }
 
-            val toggle = SwitchPreference(context)
-            toggle.key = "some_fake_key"
-            toggle.title = "Wow, neato"
-            preferenceScreen.addPreference(toggle)
-            preferenceScreen.setTitle(R.string.settings_server_unused)
-            preferenceScreen.setKey("another_fake_key")
+            serverCount++
+            serverPreference = Preference(context)
+            serverPreference.key = "$serverCount"
+            serverPreference.title = "Add Server"
+            preferenceScreen.addPreference(serverPreference)
         }
 
         override fun onPreferenceTreeClick(preference: Preference): Boolean {
@@ -119,6 +117,15 @@ class SettingsActivity : SubsonicActivity() {
     class ServerInstanceFragment(val instance: Int): PreferenceFragmentCompat() {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            val sharedPreferences = getPreferenceManager().getSharedPreferences()
+            var serverCount = sharedPreferences.getInt(Constants.PREFERENCES_KEY_SERVER_COUNT, 1)
+            if (instance > serverCount) {
+                val editor = sharedPreferences.edit()
+                serverCount++
+                editor.putInt(Constants.PREFERENCES_KEY_SERVER_COUNT, serverCount)
+                editor.apply()
+            }
+
             val context = preferenceManager.context
             val serverNamePreference = EditTextPreference(context)
             serverNamePreference.key = Constants.PREFERENCES_KEY_SERVER_NAME + instance
