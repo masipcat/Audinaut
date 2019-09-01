@@ -121,6 +121,13 @@ class SettingsActivity : SubsonicActivity() {
 
     class ServerInstanceFragment(val instance: Int): PreferenceFragmentCompat() {
 
+        lateinit var serverNamePreference: EditTextPreference
+        lateinit var serverUrlPreference: EditTextPreference
+        lateinit var serverLocalNetworkSSIDPreference: EditTextPreference
+        lateinit var serverInternalUrlPreference: EditTextPreference
+        lateinit var serverUsernamePreference: EditTextPreference
+        lateinit var serverPasswordPreference: EditTextPreference
+
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             val sharedPreferences = getPreferenceManager().getSharedPreferences()
             var serverCount = sharedPreferences.getInt(Constants.PREFERENCES_KEY_SERVER_COUNT, 1)
@@ -132,45 +139,39 @@ class SettingsActivity : SubsonicActivity() {
             }
 
             val context = preferenceManager.context
-            val serverNamePreference = EditTextPreference(context)
+
+            serverNamePreference = EditTextPreference(context)
             serverNamePreference.key = Constants.PREFERENCES_KEY_SERVER_NAME + instance
-            serverNamePreference.summary = sharedPreferences.getString(serverNamePreference.key, "")
             serverNamePreference.setDefaultValue(getResources().getString(R.string.settings_server_unused))
             serverNamePreference.setTitle(R.string.settings_server_name)
             serverNamePreference.setDialogTitle(R.string.settings_server_name)
 
-            val serverUrlPreference = EditTextPreference(context)
+            serverUrlPreference = EditTextPreference(context)
             serverUrlPreference.key = Constants.PREFERENCES_KEY_SERVER_URL + instance
-            serverUrlPreference.summary = sharedPreferences.getString(serverUrlPreference.key, "")
             //serverUrlPreference.getEditText().setInputType(InputType.TYPE_TEXT_VARIATION_URI)
             serverUrlPreference.setDefaultValue("http://yourhost")
             serverUrlPreference.setTitle(R.string.settings_server_address)
             serverUrlPreference.setDialogTitle(R.string.settings_server_address)
 
-            val serverLocalNetworkSSIDPreference = EditTextPreference(context)
+            serverLocalNetworkSSIDPreference = EditTextPreference(context)
             serverLocalNetworkSSIDPreference.key = Constants.PREFERENCES_KEY_SERVER_LOCAL_NETWORK_SSID + instance
-            serverLocalNetworkSSIDPreference.summary = sharedPreferences.getString(serverLocalNetworkSSIDPreference.key, "")
             serverLocalNetworkSSIDPreference.setDefaultValue(getResources().getString(R.string.settings_server_unused))
             serverLocalNetworkSSIDPreference.setTitle(R.string.settings_server_local_network_ssid)
             serverLocalNetworkSSIDPreference.setDialogTitle(R.string.settings_server_local_network_ssid)
 
-            val serverInternalUrlPreference: EditTextPreference = EditTextPreference(context)
+            serverInternalUrlPreference = EditTextPreference(context)
             serverInternalUrlPreference.key = Constants.PREFERENCES_KEY_SERVER_INTERNAL_URL + instance
-            serverInternalUrlPreference.summary = sharedPreferences.getString(serverInternalUrlPreference.key, "")
             serverInternalUrlPreference.setDefaultValue("")
             serverInternalUrlPreference.setTitle(R.string.settings_server_internal_address)
             serverInternalUrlPreference.setDialogTitle(R.string.settings_server_internal_address)
-            serverInternalUrlPreference.setSummary(serverInternalUrlPreference.getText())
 
-            val serverUsernamePreference: EditTextPreference = EditTextPreference(context)
+            serverUsernamePreference = EditTextPreference(context)
             serverUsernamePreference.key = Constants.PREFERENCES_KEY_USERNAME + instance
-            serverUsernamePreference.summary = sharedPreferences.getString(serverUsernamePreference.key, "")
             serverUsernamePreference.setTitle(R.string.settings_server_username)
             serverUsernamePreference.setDialogTitle(R.string.settings_server_username)
 
-            val serverPasswordPreference: EditTextPreference = EditTextPreference(context)
+            serverPasswordPreference = EditTextPreference(context)
             serverPasswordPreference.key = Constants.PREFERENCES_KEY_PASSWORD + instance
-            serverPasswordPreference.setSummary("***");
             serverPasswordPreference.setTitle(R.string.settings_server_password);
 
             val serverRemoveServerPreference = Preference(context)
@@ -221,6 +222,25 @@ class SettingsActivity : SubsonicActivity() {
             screen.addPreference(serverPasswordPreference)
             screen.addPreference(serverRemoveServerPreference)
             preferenceScreen = screen
+
+            sharedPreferences.registerOnSharedPreferenceChangeListener(
+                object : SharedPreferences.OnSharedPreferenceChangeListener {
+                    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+                        updateSummaries(sharedPreferences)
+                    }
+                }
+            )
+
+            updateSummaries(sharedPreferences)
+        }
+
+        fun updateSummaries(sharedPreferences: SharedPreferences) {
+            serverNamePreference.summary = sharedPreferences.getString(serverNamePreference.key, "")
+            serverUrlPreference.summary = sharedPreferences.getString(serverUrlPreference.key, "")
+            serverLocalNetworkSSIDPreference.summary = sharedPreferences.getString(serverLocalNetworkSSIDPreference.key, "")
+            serverInternalUrlPreference.summary = sharedPreferences.getString(serverInternalUrlPreference.key, "")
+            serverUsernamePreference.summary = sharedPreferences.getString(serverUsernamePreference.key, "")
+            serverPasswordPreference.summary = "***"
         }
     }
 }
